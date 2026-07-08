@@ -131,12 +131,14 @@ export default class NotificationStyles {
             /* Button */
             .button-container {
                 margin: 0 0 32px 0;
+                width: 100%;
             }
 
-            .button {
+            .button-container a.button {
                 display: inline-block;
                 padding: 10px 18px;
-                background: #ffffff;
+                margin:auto;
+                background-color: #7155f9;
                 color: #000000 !important;
                 text-decoration: none;
                 border-radius: 6px;

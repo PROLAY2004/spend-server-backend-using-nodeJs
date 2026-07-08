@@ -12,7 +12,6 @@ export default class NotificationTemplate {
                     <meta charset="UTF-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
                     <title>Spend Server - Message Received</title>
-                    {% load static %}
                     <link rel="icon" href="{% static 'Images/icon.png' %}" type="image/x-icon">
                     <!-- Clean, modern system fonts similar to Vercel/Figma -->
                     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -66,7 +65,6 @@ export default class NotificationTemplate {
 
                                 <!-- Action Button -->
                                 <div class="button-container">
-                                    <!-- Note: Vercel style often uses inverted (white/black) for primary actions -->
                                     <a href="${configuration.FRONTEND_URL}" class="button">Go to SpendServer</a>
                                 </div>
 

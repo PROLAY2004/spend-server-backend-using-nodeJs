@@ -7,7 +7,7 @@ export default class UserController {
     try {
       const { name, email, message } = req.body;
 
-      await mailer.contactMailer(name, email, message);
+      mailer.contactMailer(name, email, message);
 
       res.status(200).json({
         message: 'Response Submitted Successfully',

@@ -41,7 +41,7 @@ export default class SendEmailService {
       const mailResponse2 = await this.mailSender(
         configuration.MAIL_USER,
         'New Contact Form Submitted',
-        template.adminContactTemplate(name, email, message, 'admin')
+        template.contactTemplate(name, email, message, 'admin')
       );
 
       if (mailResponse1 instanceof Error) {

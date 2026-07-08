@@ -5,27 +5,31 @@ export default class UserSchema {
     name: yup
       .string()
       .trim()
-      .required('Please enter your name.')
-      .min(3, 'Name must be at least 3 characters.')
-      .max(50, 'Name cannot exceed 50 characters.')
+      .required('Please Enter Your Name.')
+      .min(3, 'Name Must be at Least 3 Characters.')
+      .max(50, 'Name Cannot Exceed 50 Characters.')
       .matches(
         /^[A-Za-z\s.'-]+$/,
-        'Name can only contain letters, spaces, apostrophes, periods, and hyphens.'
+        'Name Can Only Contain Letters, Spaces, Apostrophes, Periods, and Hyphens.'
       ),
 
     email: yup
       .string()
       .trim()
       .lowercase()
-      .email('Enter a valid email address.')
-      .required('Please enter your email.')
-      .max(100, 'Email cannot exceed 100 characters.'),
+      .email('Enter a Valid Email Address.')
+      .matches(
+        /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+        'Enter a Valid Email Address.'
+      )
+      .required('Please Enter Your Email.')
+      .max(100, 'Email Cannot Exceed 100 Characters.'),
 
     message: yup
       .string()
       .trim()
-      .required('Please enter your message.')
-      .min(10, 'Message must be at least 10 characters.')
-      .max(1000, 'Message cannot exceed 1000 characters.'),
+      .required('Please Enter Your Message.')
+      .min(10, 'Message Must be at Least 10 Characters.')
+      .max(1000, 'Message Cannot Exceed 1000 Characters.'),
   });
 }
