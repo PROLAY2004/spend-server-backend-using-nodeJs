@@ -1,10 +1,12 @@
 import express from 'express';
 
 import userController from '../controller/UserController.js';
+import UserValidation from '../validations/middleware/UserValidation.js';
 
 const router = express.Router();
 const userCtrl = new userController();
+const userValidation = new UserValidation();
 
-router.post('/contact', userCtrl.contact);
+router.post('/contact', userValidation.contactRequest, userCtrl.contact);
 
 export default router;
