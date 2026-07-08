@@ -4,6 +4,7 @@ import cors from 'cors';
 import configuration from './config/config.js';
 import errorHandler from './error/errorHandler.js';
 import loggerMiddleware from './validations/middleware/loggerMiddleware.js';
+import userRoutes from './routes/userRoutes.js';
 // import connectDB from './config/dbConfig.js';
 
 const app = express();
@@ -14,8 +15,7 @@ app.use(express.json());
 app.use(loggerMiddleware);
 
 // app.use('/user/auth', authRoutes);
-// app.use('/user/admin', tokenValidator.isAdmin, adminRoutes);
-// app.use('/user', userRoutes);
+app.use('/user', userRoutes);
 
 app.use(errorHandler);
 
