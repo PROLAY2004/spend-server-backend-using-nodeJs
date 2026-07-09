@@ -19,7 +19,7 @@ export default class UserValidation {
 
   otpRequest = async (req, res, next) => {
     try {
-      await schema.emailSchema.validate(req.params, {
+      await schema.emailSchema.validate(req.query, {
         abortEarly: true, // don't return all validation errors
         stripUnknown: true, // remove unexpected fields
       });

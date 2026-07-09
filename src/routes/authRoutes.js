@@ -7,7 +7,7 @@ const router = express.Router();
 const auth = new AuthController();
 const userValidation = new UserValidation();
 
-router.get('/send-otp/:email', userValidation.otpRequest, auth.sendOtp);
+router.get('/send-otp', userValidation.otpRequest, auth.sendOtp);
 router.post('/login', userValidation.loginRequest, auth.login);
 
 export default router;

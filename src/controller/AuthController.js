@@ -8,7 +8,7 @@ import genAuthToken from '../utils/tokenGenerator.js';
 export default class AuthController {
   sendOtp = async (req, res, next) => {
     try {
-      const email = req.params.email;
+      const email = req.query.email;
 
       await otpGenerator(res, email);
 
@@ -23,7 +23,8 @@ export default class AuthController {
 
   login = async (req, res, next) => {
     try {
-      const { email, otp } = req.body;
+      const email = req.body.email;
+      const newOtp = req.body.otp;
       const uuid = crypto.randomUUID();
 
       const latestOtp = await otp.findOne({ email }).sort({ createdAt: -1 });
@@ -46,7 +47,7 @@ export default class AuthController {
             lastLogin: Date.now(),
           },
           $setOnInsert: {
-            name: `Guest${uuid}`,
+            name: `Guest-${uuid}`,
             email,
           },
         },
