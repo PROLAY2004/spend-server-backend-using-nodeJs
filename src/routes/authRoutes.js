@@ -1,10 +1,12 @@
 import express from 'express';
 
 import AuthController from '../controller/AuthController.js';
+import UserValidation from '../validations/middleware/UserValidation.js';
 
 const router = express.Router();
 const auth = new AuthController();
+const userValidation = new UserValidation();
 
-router.post('/send-otp', auth.sendOtp);
+router.get('/send-otp/:email', userValidation.otpRequest, auth.sendOtp);
 
 export default router;

@@ -32,4 +32,18 @@ export default class UserSchema {
       .min(10, 'Message Must be at Least 10 Characters.')
       .max(1000, 'Message Cannot Exceed 1000 Characters.'),
   });
+
+  emailSchema = yup.object({
+    email: yup
+      .string()
+      .trim()
+      .lowercase()
+      .email('Enter a Valid Email Address.')
+      .matches(
+        /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+        'Enter a Valid Email Address.'
+      )
+      .required('Please Enter Your Email.')
+      .max(100, 'Email Cannot Exceed 100 Characters.'),
+  });
 }

@@ -16,4 +16,17 @@ export default class UserValidation {
       next(err);
     }
   };
+
+  otpRequest = async (req, res, next) => {
+    try {
+      await schema.emailSchema.validate(req.params, {
+        abortEarly: true, // don't return all validation errors
+        stripUnknown: true, // remove unexpected fields
+      });
+
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
 }
