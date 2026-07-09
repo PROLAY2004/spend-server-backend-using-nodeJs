@@ -89,6 +89,74 @@ export default class NotificationTemplate {
   };
 
   otpTemplate = (otp) => {
-    return ``;
+    return `<!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Spend Server - Verify Your Email</title>
+                    <link rel="preconnect" href="https://fonts.googleapis.com">
+                    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap"
+                        rel="stylesheet">
+                    
+                    <style type="text/css">
+                        ${style.otpStyle}
+                    </style>
+                </head>
+
+                <body>
+                    <div class="email-wrapper">
+                        <div class="email-container">
+                            <div class="header">
+                                <a href="#" class="logo">Spend<span>Server</span></a>
+                                <div class="tagline">Secure Verification Process</div>
+                            </div>
+    
+                            <div class="content">
+                                <h1>Verify Your Email Address</h1>
+                            
+                                <p>Hello valued user,</p>
+                        
+                                <p>Thank you for registering with <span class="highlight">Spend Server</span>. To complete your
+                                registration and secure your account, please verify your email address using the OTP below:</p>
+                        
+                
+                                <div class="otp-container">
+                                    <div class="otp-code">${otp}</div>
+                                </div>
+
+                                <div class="security-note">
+                                    <strong>Security Tip:</strong> This OTP is valid for 15 minutes. Never share this code with anyone,
+                                    including Spend Server staff. We will never ask you for your verification code.
+                                </div>
+
+                                <p>If you didn't request this email, please ignore it or contact our support team immediately at 
+                                    <a href="mailto:spendserver@gmail.com" style="color: #7155f9; text-decoration: none;">spendserver@gmail.com</a>.
+                                </p>
+
+                                <!-- Action Button -->
+                                <div class="button-container">
+                                    <a href="${configuration.FRONTEND_URL}" class="button">Return to Spend Server</a>
+                                    </div>
+                                        <p>For your security, this OTP will expire after 15 minutes.</p>
+                                        <p style="margin-bottom: 0;">Welcome aboard,<br>The Spend Server Team</p>
+                                    </div>
+
+                                    <!-- Footer -->
+                                    <div class="footer">
+                                        <div class="contact">
+                                            Email: <a href="mailto:spendserver@gmail.com">spendserver@gmail.com</a>
+                                        </div>
+                                        <div class="footer-bottom">
+                                            &copy; 2025 Spend Server. All rights reserved.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+            </html>`;
   };
 }
