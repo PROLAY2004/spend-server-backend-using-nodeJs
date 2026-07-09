@@ -8,7 +8,7 @@ export default class AuthController {
       await otpGenerator(res, email);
 
       res.status(200).json({
-        message: 'Response Submitted Successfully',
+        message: 'OTP Sent to Email.',
         success: true,
         data: {
           user: req.user,

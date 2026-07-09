@@ -101,7 +101,7 @@ export default class NotificationTemplate {
                         rel="stylesheet">
                     
                     <style type="text/css">
-                        ${style.otpStyle}
+                        ${style.otpStyle()}
                     </style>
                 </head>
 

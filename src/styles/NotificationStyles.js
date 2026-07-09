@@ -193,8 +193,7 @@ export default class NotificationStyles {
   };
 
   otpStyle = () => {
-    return `
-            body,
+    return `body,
             html {
                 margin: 0;
                 padding: 0;
