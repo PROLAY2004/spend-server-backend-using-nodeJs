@@ -54,4 +54,20 @@ export default class SendEmailService {
       throw error;
     }
   };
+
+  otpMailer = async (email, otp) => {
+    try {
+      const mailResponse = await this.mailSender(
+        email,
+        'Verification Email',
+        template.otpTemplate(otp)
+      );
+
+      if (mailResponse instanceof Error) {
+        throw mailResponse;
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
 }

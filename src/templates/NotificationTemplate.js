@@ -87,4 +87,8 @@ export default class NotificationTemplate {
                 </body>
             </html>`;
   };
+
+  otpTemplate = (otp) => {
+    return ``;
+  };
 }
