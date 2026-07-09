@@ -313,7 +313,7 @@ export default class NotificationStyles {
             .button {
                 display: inline-block;
                 padding: 10px 18px;
-                background: #ffffff;
+                background: #7155f9;
                 color: #000000 !important;
                 text-decoration: none;
                 border-radius: 6px;

@@ -1,4 +1,3 @@
-import crypto from 'crypto';
 import axios from 'axios';
 
 import otp from '../models/otpModel.js';
@@ -27,7 +26,6 @@ export default class AuthController {
     try {
       const email = req.body.email;
       const newOtp = req.body.otp;
-      const uuid = crypto.randomUUID();
 
       const latestOtp = await otp.findOne({ email }).sort({ createdAt: -1 });
       const otpTime = new Date(latestOtp.createdAt);
@@ -49,7 +47,6 @@ export default class AuthController {
             lastLogin: Date.now(),
           },
           $setOnInsert: {
-            name: `Guest-${uuid}`,
             email,
           },
         },
@@ -98,7 +95,6 @@ export default class AuthController {
             lastLogin: Date.now(),
           },
           $setOnInsert: {
-            name: `Guest-${uuid}`,
             email,
           },
         },
