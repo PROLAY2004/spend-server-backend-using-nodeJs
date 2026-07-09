@@ -10,9 +10,21 @@ export default class AuthController {
       res.status(200).json({
         message: 'OTP Sent to Email.',
         success: true,
-        data: {
-          user: req.user,
-        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  login = async (req, res, next) => {
+    try {
+      const { email, otp } = req.body;
+
+      await otpGenerator(res, email);
+
+      res.status(200).json({
+        message: 'User Login Successful.',
+        success: true,
       });
     } catch (err) {
       next(err);

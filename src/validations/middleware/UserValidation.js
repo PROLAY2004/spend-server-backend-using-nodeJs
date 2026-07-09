@@ -29,4 +29,17 @@ export default class UserValidation {
       next(err);
     }
   };
+
+  loginRequest = async (req, res, next) => {
+    try {
+      await schema.otpSchema.validate(req.body, {
+        abortEarly: true, // don't return all validation errors
+        stripUnknown: true, // remove unexpected fields
+      });
+
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
 }

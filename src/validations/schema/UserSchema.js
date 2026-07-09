@@ -46,4 +46,25 @@ export default class UserSchema {
       .required('Please Enter Your Email.')
       .max(100, 'Email Cannot Exceed 100 Characters.'),
   });
+
+  otpSchema = yup.object({
+    email: yup
+      .string()
+      .trim()
+      .lowercase()
+      .email('Enter a Valid Email Address.')
+      .matches(
+        /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+        'Enter a Valid Email Address.'
+      )
+      .required('Please Enter Your Email.')
+      .max(100, 'Email Cannot Exceed 100 Characters.'),
+
+    otp: yup
+      .string()
+      .trim()
+      .required('Please Enter the OTP.')
+      .length(6, 'OTP Must Be 6 Digits.')
+      .matches(/^\d+$/, 'OTP Must Contain Only Numbers.'),
+  });
 }
