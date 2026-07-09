@@ -5,9 +5,7 @@ dotenv.config();
 const configuration = {
   PORT: process.env.PORT,
   FRONTEND_URL: process.env.FRONTEND_URL,
-
-  //   MONGO_URI: process.env.MONGO_URI,
-
+  MONGO_URI: process.env.MONGO_URI,
   MAIL_SERVICE: process.env.MAIL_SERVICE,
   MAIL_USER: process.env.MAIL_USER,
   MAIL_PASS: process.env.MAIL_PASS,

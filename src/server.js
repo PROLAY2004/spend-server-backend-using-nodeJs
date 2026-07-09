@@ -14,7 +14,7 @@ app.use(cors(configuration.CORS));
 app.use(express.json());
 app.use(loggerMiddleware);
 
-// app.use('/user/auth', authRoutes);
+app.use('/user/auth', authRoutes);
 app.use('/user', userRoutes);
 
 app.use(errorHandler);
