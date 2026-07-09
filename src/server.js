@@ -4,10 +4,14 @@ import cors from 'cors';
 import configuration from './config/config.js';
 import errorHandler from './error/errorHandler.js';
 import loggerMiddleware from './validations/middleware/loggerMiddleware.js';
+import connectDB from './config/dbConfig.js';
+
 import userRoutes from './routes/userRoutes.js';
-// import connectDB from './config/dbConfig.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
+
+await connectDB();
 
 app.use(cors(configuration.CORS));
 
