@@ -9,5 +9,6 @@ const userValidation = new UserValidation();
 
 router.get('/send-otp', userValidation.otpRequest, auth.sendOtp);
 router.post('/login', userValidation.loginRequest, auth.login);
+router.get('/google', auth.google);
 
 export default router;
