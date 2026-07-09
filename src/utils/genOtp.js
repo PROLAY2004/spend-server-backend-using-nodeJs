@@ -3,7 +3,7 @@ import SendEmailService from '../services/sendMailService.js';
 
 const mailer = new SendEmailService();
 
-export default async function otpGenerator(res, email, userType = 'user') {
+export default async function otpGenerator(res, email) {
   try {
     const newOtp = Math.floor(100000 + Math.random() * 900000);
     const latestOtp = await otp.findOne({ email }).sort({ createdAt: -1 });
@@ -17,7 +17,7 @@ export default async function otpGenerator(res, email, userType = 'user') {
         );
 
         res.status(425);
-        throw new Error(`Please try after ${minutes} minutes`);
+        throw new Error(`Please Try After ${minutes} Minutes`);
       }
     }
 
@@ -26,7 +26,7 @@ export default async function otpGenerator(res, email, userType = 'user') {
       email,
     });
 
-    await mailer.otpMailer(email, newOtp, userType);
+    await mailer.otpMailer(email, newOtp);
   } catch (err) {
     throw err;
   }
