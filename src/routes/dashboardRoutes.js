@@ -1,15 +1,19 @@
 import express from 'express';
 
 import PayerController from '../controller/PayerController.js';
+import RecordsController from '../controller/RecordsController.js';
 import FormValidation from '../validations/middleware/FormValidation.js';
 
 const router = express.Router();
 const payer = new PayerController();
 const validation = new FormValidation();
+const record = new RecordsController();
 
 router.post('/payer', validation.addPayerRequest, payer.addPayer);
 router.put('/payer/:payerId', validation.addPayerRequest, payer.editPayer);
 router.delete('/payer/:payerId', payer.deletePayer);
-router.post('/fetch-payers', payer.fetchPayer);
+router.post('/fetch-payers', validation.addLedgerRequest, payer.fetchPayer);
+
+router.post('/records', record.addLedger);
 
 export default router;
