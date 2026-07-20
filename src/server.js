@@ -8,6 +8,7 @@ import connectDB from './config/dbConfig.js';
 
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(loggerMiddleware);
 
 app.use('/user/auth', authRoutes);
+app.use('/user/dashboard', dashboardRoutes);
 app.use('/user', userRoutes);
 
 app.use(errorHandler);

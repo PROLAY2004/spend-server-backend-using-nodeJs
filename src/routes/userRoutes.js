@@ -1,10 +1,10 @@
 import express from 'express';
 
-import userController from '../controller/UserController.js';
+import UserController from '../controller/UserController.js';
 import UserValidation from '../validations/middleware/UserValidation.js';
 
 const router = express.Router();
-const userCtrl = new userController();
+const userCtrl = new UserController();
 const userValidation = new UserValidation();
 
 router.post('/contact', userValidation.contactRequest, userCtrl.contact);
