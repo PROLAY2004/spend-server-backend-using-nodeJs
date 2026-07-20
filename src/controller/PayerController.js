@@ -83,11 +83,46 @@ export default class PayerController {
     }
   };
 
+  deletePayer = async (req, res, next) => {
+    try {
+      const payerId = req.params.payerId;
+      const updatedPayer = await payer.findOneAndUpdate(
+        {
+          _id: payerId,
+          userId: req.user._id,
+          isDeleted: false,
+        },
+        {
+          $set: {
+            isDeleted : true,
+          },
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      if (!updatedPayer) {
+        res.status(404);
+        throw new Error('Payer does not exist.');
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Payer Deleted Successfully',
+        data: updatedPayer,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
   fetchPayer = async (req, res, next) => {
     try {
       const user = req.user;
       const payerDetails = await payer
-        .find({ userId : user._id, isDeleted: false })
+        .find({ userId: user._id, isDeleted: false })
         .sort({ createdAt: -1 });
 
       const updatedPayerDetails = await Promise.all(

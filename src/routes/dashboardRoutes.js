@@ -9,6 +9,7 @@ const validation = new FormValidation();
 
 router.post('/payer', validation.addPayerRequest, payer.addPayer);
 router.put('/payer/:payerId', validation.addPayerRequest, payer.editPayer);
+router.delete('/payer/:payerId', payer.deletePayer);
 router.post('/fetch-payers', payer.fetchPayer);
 
 export default router;
