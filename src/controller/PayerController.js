@@ -3,6 +3,7 @@ export default class PayerController {
     try {
       const { name, mobile } = req.body;
 
+      
 
       res.status(200).json({
         message: 'New Payer Added Successfully',

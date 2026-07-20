@@ -118,4 +118,22 @@ export default class AuthController {
       next(err);
     }
   };
+
+  refresh = async (req, res, next) => {
+    try {
+      const userInfo = req.user;
+      const tokens = await genAuthToken(userInfo._id, 'refresh');
+
+      res.status(200).json({
+        message: 'Refresh Token Successfully Generated.',
+        success: true,
+        data: {
+          access_token: tokens.access_token,
+          refresh_token: tokens.refresh_token,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
 }
