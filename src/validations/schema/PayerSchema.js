@@ -18,8 +18,8 @@ export default class PayerSchema {
       .trim()
       .required('Please Enter Your Mobile Number.')
       .matches(
-        /^(?:\+91|91)?[6-9]\d{9}$/,
-        'Enter a Valid Indian Mobile Number.'
+        /^(?!1234567890$)(?!9876543210$)[6-9]\d{9}$/,
+        'Enter a Valid 10-Digit Mobile Number.'
       ),
   });
 }

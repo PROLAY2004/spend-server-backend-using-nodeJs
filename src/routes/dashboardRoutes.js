@@ -7,6 +7,8 @@ const router = express.Router();
 const payer = new PayerController();
 const validation = new FormValidation();
 
-router.post('/add-payer', validation.addPayerRequest, payer.addPayer);
+router.post('/payer', validation.addPayerRequest, payer.addPayer);
+router.put('/payer/:payerId', validation.addPayerRequest, payer.editPayer);
+router.post('/fetch-payers', payer.fetchPayer);
 
 export default router;
