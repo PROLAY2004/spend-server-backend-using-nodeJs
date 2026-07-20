@@ -12,8 +12,8 @@ const record = new RecordsController();
 router.post('/payer', validation.addPayerRequest, payer.addPayer);
 router.put('/payer/:payerId', validation.addPayerRequest, payer.editPayer);
 router.delete('/payer/:payerId', payer.deletePayer);
-router.post('/fetch-payers', validation.addLedgerRequest, payer.fetchPayer);
+router.post('/fetch-payers', payer.fetchPayer);
 
-router.post('/records', record.addLedger);
+router.post('/records',validation.addLedgerRequest, record.addLedger);
 
 export default router;
