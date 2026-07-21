@@ -23,7 +23,7 @@ export default class PayerController {
         userId: req.user._id,
       });
 
-      res.status(200).json({
+      res.status(201).json({
         message: 'New Payer Added Successfully',
         success: true,
       });

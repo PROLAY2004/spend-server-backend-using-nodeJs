@@ -53,9 +53,6 @@ export default class RecordSchema {
       .oneOf(['paid', 'non-paid'], 'Please Select a Valid Status.')
       .required('Status is Required.'),
 
-    description: yup
-      .string()
-      .trim()
-      .nullable(),
+    description: yup.string().trim().required('Status is Required.'),
   });
 }
