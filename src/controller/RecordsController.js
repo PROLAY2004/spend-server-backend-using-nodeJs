@@ -84,16 +84,16 @@ export default class RecordsController {
 
   deleteLedger = async (req, res, next) => {
     try {
-      const recordId = req.params.recordId;
-
-      if (!recordId) {
+      const {recordId, payerId} = req.body;
+      
+      if(!recordId || !payerId){
         res.status(404);
-        throw new Error('Record Id not found');
+        throw new Error('Some Important IDs are Missing');
       }
 
       const updatedLedger = await record.findOneAndUpdate(
         {
-          _id: recordId,
+          _id: req.body.recordId,
           payerId: req.body.payerId,
           userId: req.user._id,
           isDeleted: false,

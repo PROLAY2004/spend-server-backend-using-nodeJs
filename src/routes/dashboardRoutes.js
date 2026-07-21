@@ -17,6 +17,6 @@ router.post('/fetch-payer-ledger/:payerId', payer.fetchLedger);
 
 router.post('/records', validation.addLedgerRequest, record.addLedger);
 router.put('/records/:recId', validation.addLedgerRequest, record.editLedger);
-router.delete('/records/:recordId', record.deleteLedger);
+router.delete('/records', record.deleteLedger);
 
 export default router;
