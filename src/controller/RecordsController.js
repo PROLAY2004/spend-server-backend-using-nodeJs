@@ -74,7 +74,7 @@ export default class RecordsController {
       }
 
       res.status(200).json({
-        message: 'New Ledger Added Successfully',
+        message: 'Ledger Updated Successfully',
         success: true,
       });
     } catch (err) {
