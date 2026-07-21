@@ -1,3 +1,4 @@
+import { toolresults_v1beta3 } from 'googleapis';
 import payer from '../models/payerModel.js';
 import record from '../models/recordsModel.js';
 
@@ -84,9 +85,9 @@ export default class RecordsController {
 
   deleteLedger = async (req, res, next) => {
     try {
-      const {recordId, payerId} = req.body;
-      
-      if(!recordId || !payerId){
+      const { recordId, payerId } = req.body;
+
+      if (!recordId || !payerId) {
         res.status(404);
         throw new Error('Some Important IDs are Missing');
       }
@@ -100,7 +101,7 @@ export default class RecordsController {
         },
         {
           $set: {
-            isDeleted : false
+            isDeleted: true,
           },
         },
         {
@@ -117,6 +118,79 @@ export default class RecordsController {
       res.status(200).json({
         message: 'Ledger Deleted Successfully',
         success: true,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  bulkDeleteLedgers = async (req, res, next) => {
+    try {
+      const { recordIds } = req.body;
+
+      if (!recordIds || !Array.isArray(recordIds) || recordIds.length === 0) {
+        res.status(404);
+        throw new Error('No Records Selected');
+      }
+
+      // Update all selected records to isDeleted: true
+      const updatedRecord = await record.updateMany(
+        { _id: { $in: recordIds }, userId: req.user._id, isDeleted: false },
+        { $set: { isDeleted: true } }
+      );
+
+      if (!updatedRecord) {
+        res.status(404);
+        throw new Error('No Records Found');
+      }
+
+      res.status(200).json({
+        success: true,
+        message: `${recordIds.length} records deleted successfully`,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  bulkStatusLedgers = async (req, res, next) => {
+    try {
+      const { recordIds } = req.body;
+
+      if (!recordIds || !Array.isArray(recordIds) || recordIds.length === 0) {
+        res.status(404);
+        throw new Error('Record ID not Found');
+      }
+
+      // Find the first record to determine the current status
+      const sampleRecord = await record.findOne({
+        _id: recordIds[0],
+        userId: req.user._id,
+        isDeleted: false,
+      });
+
+      if (!sampleRecord) {
+        res.status(404);
+        throw new Error('No Records Selected');
+      }
+
+      // Toggle the status
+      const newStatus = sampleRecord.status === 'paid' ? 'non-paid' : 'paid';
+
+      // Apply new status to all selected records
+      const updatedRecord = await record.updateMany(
+        { _id: { $in: recordIds }, userId: req.user._id, isDeleted: false },
+        { $set: { status: newStatus } }
+      );
+
+      if (!updatedRecord) {
+        res.status(404);
+        throw new Error('No Records Found');
+      }
+
+      res.status(200).json({
+        success: true,
+        message: `Status updated to ${newStatus} for selected records`,
       });
     } catch (err) {
       next(err);

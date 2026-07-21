@@ -222,21 +222,52 @@ export default class PayerController {
   fetchLedger = async (req, res, next) => {
     try {
       const payerId = req.params.payerId;
+      const { page = 1, limit = 50, search = '', filter = 'All' } = req.body;
 
       if (!payerId) {
         res.status(400);
         throw new Error('Payer Id is Required');
       }
 
-      const recordData = await record
-        .find({ payerId, userId: req.user._id, isDeleted: false })
-        .sort({ createdAt: -1 });
+      // Base Query
+      const query = { payerId, userId: req.user._id, isDeleted: false };
+
+      if (filter === 'Paid') query.status = 'paid';
+      if (filter === 'Non-Paid') query.status = 'non-paid';
+
+      let recordData = await record.find(query).sort({ createdAt: -1 });
+
+      // Apply Search (Date, Category, Description)
+      if (search) {
+        const searchLower = search.toLowerCase();
+        recordData = recordData.filter((item) => {
+          // Formatting Date to match typical readable strings
+          const dateStr = new Date(item.date)
+            .toLocaleDateString()
+            .toLowerCase();
+          return (
+            (item.category &&
+              item.category.toLowerCase().includes(searchLower)) ||
+            (item.description &&
+              item.description.toLowerCase().includes(searchLower)) ||
+            dateStr.includes(searchLower)
+          );
+        });
+      }
+
+      // Apply Pagination
+      const totalLedgers = recordData.length;
+      const totalPages = Math.ceil(totalLedgers / limit);
+      const paginatedData = recordData.slice((page - 1) * limit, page * limit);
 
       res.status(200).json({
         message: 'Ledgers Fetched Successfully',
         success: true,
         data: {
-          recordData,
+          recordData: paginatedData,
+          totalPages,
+          currentPage: parseInt(page),
+          totalLedgers,
         },
       });
     } catch (err) {
