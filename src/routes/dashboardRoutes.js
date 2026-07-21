@@ -13,7 +13,9 @@ router.post('/payer', validation.addPayerRequest, payer.addPayer);
 router.put('/payer/:payerId', validation.addPayerRequest, payer.editPayer);
 router.delete('/payer/:payerId', payer.deletePayer);
 router.post('/fetch-payers', payer.fetchPayer);
+router.post('/fetch-payer-ledger/:payerId', payer.fetchLedger);
 
-router.post('/records',validation.addLedgerRequest, record.addLedger);
+router.post('/records', validation.addLedgerRequest, record.addLedger);
+router.put('/records/:recId', validation.addLedgerRequest, record.editLedger);
 
 export default router;

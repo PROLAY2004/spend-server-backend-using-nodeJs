@@ -37,6 +37,11 @@ export default class PayerController {
       const { name, mobile } = req.body;
       const payerId = req.params.payerId;
 
+      if (!payerId) {
+        res.status(400);
+        throw new Error('Payer Id is Required');
+      }
+
       // Check if mobile already exists for another payer
       const existingPayer = await payer.findOne({
         _id: { $ne: payerId }, // Exclude the current payer
@@ -86,6 +91,12 @@ export default class PayerController {
   deletePayer = async (req, res, next) => {
     try {
       const payerId = req.params.payerId;
+
+      if (!payerId) {
+        res.status(400);
+        throw new Error('Payer Id is Required');
+      }
+
       const updatedPayer = await payer.findOneAndUpdate(
         {
           _id: payerId,
@@ -94,7 +105,7 @@ export default class PayerController {
         },
         {
           $set: {
-            isDeleted : true,
+            isDeleted: true,
           },
         },
         {
@@ -152,6 +163,31 @@ export default class PayerController {
         data: {
           user,
           payerDetails: updatedPayerDetails,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  fetchLedger = async (req, res, next) => {
+    try {
+      const payerId = req.params.payerId;
+
+      if (!payerId) {
+        res.status(400);
+        throw new Error('Payer Id is Required');
+      }
+
+      const recordData = await record
+        .find({ payerId, userId: req.user._id, isDeleted: false })
+        .sort({ createdAt: -1 });
+
+      res.status(200).json({
+        message: 'Ledgers Fetched Successfully',
+        success: true,
+        data: {
+          recordData,
         },
       });
     } catch (err) {
