@@ -33,11 +33,11 @@ export default class RecordsController {
     try {
       const recordId = req.params.recId;
 
-      if(!recordId){
+      if (!recordId) {
         res.status(404);
-        throw new Error("Record Id not found");
+        throw new Error('Record Id not found');
       }
-      
+
       const selectedDate = new Date(req.body.date);
       const now = new Date();
 
@@ -68,13 +68,54 @@ export default class RecordsController {
         }
       );
 
-      if(!updatedLedger){
+      if (!updatedLedger) {
         res.status(404);
         throw new Error('No Ledger Found.');
       }
 
       res.status(200).json({
         message: 'Ledger Updated Successfully',
+        success: true,
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  deleteLedger = async (req, res, next) => {
+    try {
+      const recordId = req.params.recordId;
+
+      if (!recordId) {
+        res.status(404);
+        throw new Error('Record Id not found');
+      }
+
+      const updatedLedger = await record.findOneAndUpdate(
+        {
+          _id: recordId,
+          payerId: req.body.payerId,
+          userId: req.user._id,
+          isDeleted: false,
+        },
+        {
+          $set: {
+            isDeleted : false
+          },
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      if (!updatedLedger) {
+        res.status(404);
+        throw new Error('No Ledger Found.');
+      }
+
+      res.status(200).json({
+        message: 'Ledger Deleted Successfully',
         success: true,
       });
     } catch (err) {

@@ -132,11 +132,22 @@ export default class PayerController {
   fetchPayer = async (req, res, next) => {
     try {
       const user = req.user;
-      const payerDetails = await payer
-        .find({ userId: user._id, isDeleted: false })
-        .sort({ createdAt: -1 });
 
-      const updatedPayerDetails = await Promise.all(
+      // Extract parameters with defaults
+      const page = parseInt(req.body.page) || 1;
+      const limit = parseInt(req.body.limit) || 5;
+      const search = (req.body.search || '').toLowerCase();
+      const filter = req.body.filter || 'All';
+      const sortOption = req.body.sort || 'Newest First';
+
+      // Fetch all base payers
+      const payerDetails = await payer.find({
+        userId: user._id,
+        isDeleted: false,
+      });
+
+      // Calculate total due for all payers
+      let updatedPayerDetails = await Promise.all(
         payerDetails.map(async (payerData) => {
           const recordDetails = await record.find({
             userId: user._id,
@@ -157,12 +168,50 @@ export default class PayerController {
         })
       );
 
+      // 1. Apply Search (Name and Mobile)
+      if (search) {
+        updatedPayerDetails = updatedPayerDetails.filter(
+          (p) =>
+            p.name.toLowerCase().includes(search) || p.mobile.includes(search)
+        );
+      }
+
+      // 2. Apply Dropdown Filter
+      if (filter === 'Paid') {
+        updatedPayerDetails = updatedPayerDetails.filter(
+          (p) => p.totalDue === 0
+        );
+      } else if (filter === 'Non-Paid') {
+        updatedPayerDetails = updatedPayerDetails.filter((p) => p.totalDue > 0);
+      }
+
+      // 3. Apply Sorting
+      updatedPayerDetails.sort((a, b) => {
+        if (sortOption === 'Name A-Z') return a.name.localeCompare(b.name);
+        if (sortOption === 'Name Z-A') return b.name.localeCompare(a.name);
+        if (sortOption === 'Due: High to Low') return b.totalDue - a.totalDue;
+        if (sortOption === 'Due: Low to High') return a.totalDue - b.totalDue;
+        // Default: Newest First
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      });
+
+      // 4. Apply Pagination
+      const totalPayers = updatedPayerDetails.length;
+      const totalPages = Math.ceil(totalPayers / limit);
+      const paginatedPayers = updatedPayerDetails.slice(
+        (page - 1) * limit,
+        page * limit
+      );
+
       res.status(200).json({
         message: 'Payers Fetched Successfully',
         success: true,
         data: {
           user,
-          payerDetails: updatedPayerDetails,
+          payerDetails: paginatedPayers,
+          totalPages,
+          currentPage: page,
+          totalPayers,
         },
       });
     } catch (err) {
