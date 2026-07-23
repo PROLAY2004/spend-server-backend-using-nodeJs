@@ -74,6 +74,6 @@ export default class RecordSchema {
         })
       )
       .min(1, 'Please Select at Least One Record.')
-      .required('Records Are Required.'),
+      .required('Records are Required.'),
   });
 }

@@ -2,12 +2,17 @@ import express from 'express';
 
 import PayerController from '../controller/PayerController.js';
 import RecordsController from '../controller/RecordsController.js';
+import UserController from '../controller/UserController.js';
 import FormValidation from '../validations/middleware/FormValidation.js';
 
 const router = express.Router();
 const payer = new PayerController();
 const validation = new FormValidation();
 const record = new RecordsController();
+const user = new UserController();
+
+router.post('/overview', user.getDashboardOverview);
+router.get('/export', user.exportDashboardExcel);
 
 router.post('/payer', validation.addPayerRequest, payer.addPayer);
 router.put('/payer/:payerId', validation.addPayerRequest, payer.editPayer);

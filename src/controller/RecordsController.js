@@ -131,7 +131,7 @@ export default class RecordsController {
       const statuses = [...new Set(records.map((record) => record.status))];
       let updatedRecord = [];
 
-      if (statuses.length > 1) {
+      if (statuses.length > 1 && action !== 'delete') {
         res.status(400)
         throw new Error('Please Select Records With the Same Status.');
       }
@@ -155,7 +155,7 @@ export default class RecordsController {
 
       else if(action === 'status'){
         const currentStatus = statuses[0];
-        const newStatus = currentStatus === 'paid' ? 'unpaid' : 'paid';
+        const newStatus = currentStatus === 'paid' ? 'non-paid' : 'paid';
 
         updatedRecord = await record.updateMany(
           {
