@@ -59,21 +59,21 @@ export default class RecordSchema {
   bulkActionSchema = yup.object({
     action: yup
       .string()
-      .oneOf(['delete', 'status'], 'Please select a valid action.')
-      .required('Please select an action.'),
+      .oneOf(['delete', 'status'], 'Please Select a Valid Action.')
+      .required('Please Select an Action.'),
 
     records: yup
       .array()
       .of(
         yup.object({
-          id: yup.string().required('Record ID is required.'),
+          id: yup.string().required('Record ID is Required.'),
           status: yup
             .string()
-            .oneOf(['paid', 'non-paid'], 'Invalid record status.')
-            .required('Record status is required.'),
+            .oneOf(['paid', 'non-paid'], 'Invalid Record Status.')
+            .required('Record Status is Required.'),
         })
       )
-      .min(1, 'Please select at least one record.')
-      .required('Records are required.'),
+      .min(1, 'Please Select at Least One Record.')
+      .required('Records Are Required.'),
   });
 }
