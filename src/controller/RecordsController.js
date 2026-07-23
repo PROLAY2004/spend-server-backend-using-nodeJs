@@ -124,14 +124,9 @@ export default class RecordsController {
     }
   };
 
-  bulkDeleteLedgers = async (req, res, next) => {
+  bulkActionLedgers = async (req, res, next) => {
     try {
-      const { recordIds } = req.body;
-
-      if (!recordIds || !Array.isArray(recordIds) || recordIds.length === 0) {
-        res.status(404);
-        throw new Error('No Records Selected');
-      }
+      const { action, records } = req.body;
 
       // Update all selected records to isDeleted: true
       const updatedRecord = await record.updateMany(

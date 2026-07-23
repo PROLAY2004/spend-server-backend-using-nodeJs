@@ -31,4 +31,17 @@ export default class FormValidation {
       next(err);
     }
   };
+
+  bulkLedgerRequest = async (req, res, next) => {
+    try {
+      await record.bulkActionSchema.validate(req.body, {
+        abortEarly: true, // don't return all validation errors
+        stripUnknown: true, // remove unexpected fields
+      });
+
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
 }
