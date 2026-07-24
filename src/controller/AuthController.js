@@ -9,7 +9,18 @@ import oauth2Client from '../utils/googleClient.js';
 export default class AuthController {
   sendOtp = async (req, res, next) => {
     try {
-      const email = req.query.email;
+      const email = req.query.email.toLowerCase();
+      const isUser = await user.findOne({email});
+
+      if(isUser.isBlocked){
+        res.status(400)
+        throw new Error('User Blocked By Admin.');
+      }
+
+      if(isUser.isDeleted){
+        res.status(404)
+        throw new Error("Can't Login, Deletation Request Recived.");
+      }
 
       await otpGenerator(res, email);
 
@@ -24,7 +35,7 @@ export default class AuthController {
 
   login = async (req, res, next) => {
     try {
-      const email = req.body.email;
+      const email = req.body.email.toLowerCase();
       const newOtp = req.body.otp;
 
       const latestOtp = await otp.findOne({ email }).sort({ createdAt: -1 });
@@ -87,7 +98,7 @@ export default class AuthController {
         `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${googleResponse.tokens.access_token}`
       );
 
-      const email = userResponse.data.email;
+      const email = userResponse.data.email.toLowerCase();
       const userInfo = await user.findOneAndUpdate(
         { email },
         {
