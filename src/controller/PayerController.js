@@ -221,27 +221,44 @@ export default class PayerController {
 
   fetchLedger = async (req, res, next) => {
     try {
-      const payerId = req.params.payerId;
-      const { page = 1, limit = 50, search = '', filter = 'All' } = req.body;
+      const {
+        page = 1,
+        limit = 10,
+        search = '',
+        filter = 'All',
+        payerId,
+        dateFrom,
+        dateTo,
+      } = req.body;
 
-      if (!payerId) {
-        res.status(400);
-        throw new Error('Payer Id is Required');
-      }
+      // 1. Base Query (payerId is now optional)
+      const query = { userId: req.user._id, isDeleted: false };
 
-      // Base Query
-      const query = { payerId, userId: req.user._id, isDeleted: false };
-
+      if (payerId) query.payerId = payerId;
       if (filter === 'Paid') query.status = 'paid';
       if (filter === 'Non-Paid') query.status = 'non-paid';
 
+      // 2. Apply Date Range Filter (Optional)
+      if (dateFrom || dateTo) {
+        query.date = {};
+        if (dateFrom) {
+          query.date.$gte = new Date(dateFrom); // Greater than or equal to dateFrom
+        }
+        if (dateTo) {
+          // Appending time to ensure it covers the entire 'To' day up to midnight
+          const toDate = new Date(dateTo);
+          toDate.setHours(23, 59, 59, 999);
+          query.date.$lte = toDate;
+        }
+      }
+
+      // 3. Fetch ledgers matching the DB query
       let recordData = await record.find(query).sort({ createdAt: -1 });
 
-      // Apply Search (Date, Category, Description)
+      // 4. Apply In-Memory Search (Date, Category, Description)
       if (search) {
         const searchLower = search.toLowerCase();
         recordData = recordData.filter((item) => {
-          // Formatting Date to match typical readable strings
           const dateStr = new Date(item.date)
             .toLocaleDateString()
             .toLowerCase();
@@ -255,11 +272,21 @@ export default class PayerController {
         });
       }
 
-      // Apply Pagination
+      // 5. Apply Pagination
       const totalLedgers = recordData.length;
       const totalPages = Math.ceil(totalLedgers / limit);
       const paginatedData = recordData.slice((page - 1) * limit, page * limit);
 
+      // 6. Fetch all payers separately for the frontend dropdown
+      // This is entirely independent of the ledger search filters above
+      const payersList = await payer
+        .find({
+          userId: req.user._id,
+          isDeleted: false,
+        })
+        .select('_id name mobile');
+
+      // 7. Send Response
       res.status(200).json({
         message: 'Ledgers Fetched Successfully',
         success: true,
@@ -268,6 +295,7 @@ export default class PayerController {
           totalPages,
           currentPage: parseInt(page),
           totalLedgers,
+          payersList, // Includes the separate payers list here
         },
       });
     } catch (err) {

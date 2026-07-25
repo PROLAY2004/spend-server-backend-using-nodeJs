@@ -2,9 +2,11 @@ import { ValidationError } from 'yup';
 
 import PayerSchema from '../schema/PayerSchema.js';
 import RecordSchema from '../schema/RecordSchema.js';
+import InvoiceSchema from '../schema/InvoiceSchema.js';
 
 const payer = new PayerSchema();
 const record = new RecordSchema();
+const invoice = new InvoiceSchema();
 export default class FormValidation {
   addPayerRequest = async (req, res, next) => {
     try {
@@ -35,6 +37,19 @@ export default class FormValidation {
   bulkLedgerRequest = async (req, res, next) => {
     try {
       await record.bulkActionSchema.validate(req.body, {
+        abortEarly: true, // don't return all validation errors
+        stripUnknown: true, // remove unexpected fields
+      });
+
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  genInvoiceRequest = async (req, res, next) => {
+    try {
+      await invoice.generateInvoiceSchema.validate(req.body, {
         abortEarly: true, // don't return all validation errors
         stripUnknown: true, // remove unexpected fields
       });
