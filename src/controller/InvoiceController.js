@@ -74,20 +74,74 @@ export default class InvoiceController {
   getData = async (req, res, next) => {
     try {
       const userId = req.user._id;
-      const invoices = await invoice
-        .find({
-          userId,
-          isDeleted: false,
-        })
-        .lean()
-        .sort({ createdAt: -1 });
 
-      // Collect all unique record IDs
+      // Extract parameters from frontend payload
+      const {
+        page = 1,
+        limit = 5,
+        search = '',
+        filter = 'All',
+        sort = 'Newest First',
+      } = req.body;
+
+      // 1. Base Query
+      const query = {
+        userId,
+        isDeleted: false,
+      };
+
+      // 2. Status Filter
+      if (filter === 'Paid') query.status = 'paid';
+      if (filter === 'Pending') query.status = 'non-paid';
+      if (filter === 'Partially Paid') query.status = 'partially-paid';
+
+      // 3. Search Logic (Payer Name & Mobile)
+      if (search) {
+        // Escape special characters to prevent Regex crashes (e.g., ?, *, +)
+        const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const searchRegex = new RegExp(escapedSearch, 'i');
+        const searchConditions = [{ payerName: searchRegex }];
+
+        // Only add mobile to search if the original search term is a valid number
+        if (!isNaN(search) && search.trim() !== '') {
+          searchConditions.push({
+            $expr: {
+              $regexMatch: {
+                input: { $toString: '$payerMobile' },
+                regex: escapedSearch,
+                options: 'i',
+              },
+            },
+          });
+        }
+
+        query.$or = searchConditions;
+      }
+      
+      // 4. Sort Logic
+      let sortQuery = { createdAt: -1 };
+      if (sort === 'Oldest First') sortQuery = { createdAt: 1 };
+      if (sort === 'Amount: High to Low') sortQuery = { dueAmount: -1 };
+      if (sort === 'Amount: Low to High') sortQuery = { dueAmount: 1 };
+
+      // 5. Pagination calculation
+      const totalInvoices = await invoice.countDocuments(query);
+      const totalPages = Math.ceil(totalInvoices / limit) || 1;
+      const skip = (page - 1) * limit;
+
+      // 6. Fetch paginated data
+      const invoices = await invoice
+        .find(query)
+        .sort(sortQuery)
+        .skip(skip)
+        .limit(Number(limit))
+        .lean();
+
+      // 7. Dynamic Record Recalculation (Only for the fetched page)
       const recordIds = [
         ...new Set(invoices.flatMap((invoice) => invoice.recordData)),
       ];
 
-      // Fetch all active records once
       const records = await record
         .find({
           userId,
@@ -96,7 +150,6 @@ export default class InvoiceController {
         })
         .lean();
 
-      // Create record lookup map
       const recordMap = new Map(
         records.map((record) => [String(record._id), record])
       );
@@ -111,7 +164,6 @@ export default class InvoiceController {
         for (const recordId of invoiceItem.recordData) {
           const recordData = recordMap.get(String(recordId));
 
-          // Skip deleted or missing records
           if (!recordData) continue;
 
           if (recordData.status === 'paid') {
@@ -138,10 +190,7 @@ export default class InvoiceController {
             updateOne: {
               filter: { _id: invoiceItem._id },
               update: {
-                $set: {
-                  status,
-                  dueAmount,
-                },
+                $set: { status, dueAmount },
               },
             },
           });
@@ -158,12 +207,23 @@ export default class InvoiceController {
         await invoice.bulkWrite(bulkOperations);
       }
 
+      // Fetch active payers for the "Generate Invoice" dropdown
+      const payersList = await payer
+        .find({
+          userId,
+          isDeleted: false,
+        })
+        .select('_id name mobile');
+
       return res.status(200).json({
         success: true,
         message: 'Invoice Data Fetched Successfully',
         data: {
-          user: req.user,
           invoices: invoiceData,
+          payersList,
+          totalPages,
+          currentPage: Number(page),
+          totalInvoices,
         },
       });
     } catch (err) {
