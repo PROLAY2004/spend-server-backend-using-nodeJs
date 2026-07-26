@@ -7,6 +7,11 @@ const invoiceSchema = new mongoose.Schema(
       required: true,
     },
 
+    payerId: {
+      type: String,
+      required: true,
+    },
+
     invoiceName: {
       type: String,
       required: true,

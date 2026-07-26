@@ -32,5 +32,6 @@ router.post('/bulk-action', validation.bulkLedgerRequest, record.bulkActionLedge
 
 router.post('/invoice', validation.genInvoiceRequest, invoice.generate)
 router.post('/fetch-invoice', invoice.getData);
+router.post('/view-invoice', invoice.viewInvoice);
 
 export default router;

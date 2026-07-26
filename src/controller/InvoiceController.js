@@ -55,6 +55,7 @@ export default class InvoiceController {
 
       await invoice.create({
         userId,
+        payerId,
         invoiceName: `Invoice-${uuidv4()}`,
         payerName: payerDetails.name,
         payerMobile: payerDetails.mobile,
@@ -117,7 +118,7 @@ export default class InvoiceController {
 
         query.$or = searchConditions;
       }
-      
+
       // 4. Sort Logic
       let sortQuery = { createdAt: -1 };
       if (sort === 'Oldest First') sortQuery = { createdAt: 1 };
@@ -224,6 +225,62 @@ export default class InvoiceController {
           totalPages,
           currentPage: Number(page),
           totalInvoices,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  viewInvoice = async (req, res, next) => {
+    try {
+      const { invoiceId, page = 1, limit = 5 } = req.body;
+      const userId = req.user._id;
+
+      if (!invoiceId) {
+        res.status(404);
+        throw new Error('Invoice Id not found');
+      }
+
+      const invoiceDetails = await invoice
+        .findOne({
+          _id: invoiceId,
+          userId,
+          isDeleted: false,
+        })
+        .lean();
+
+      if (!invoiceDetails) {
+        res.status(404);
+        throw new Error('Invoice not found');
+      }
+
+      // 2. Calculate pagination on the recordData array
+      const totalRecords = invoiceDetails.recordData.length;
+      const totalPages = Math.ceil(totalRecords / limit) || 1;
+      const skip = (page - 1) * limit;
+
+      // 3. Slice the array to get only the IDs for the current page
+      const paginatedIds = invoiceDetails.recordData.slice(skip, skip + limit);
+
+      // 4. Fetch only the records for those sliced IDs
+      const records = await record
+        .find({
+          _id: { $in: paginatedIds },
+          userId,
+          isDeleted: false,
+        })
+        .sort({ createdAt: -1 }) // Sorts ledgers by newest date first
+        .lean();
+
+      return res.status(200).json({
+        success: true,
+        message: 'Invoice Data Fetched Successfully',
+        data: {
+          records,
+          totalPages,
+          currentPage: Number(page),
+          totalRecords,
         },
       });
     } catch (err) {
