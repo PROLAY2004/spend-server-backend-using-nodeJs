@@ -8,5 +8,6 @@ const userCtrl = new UserController();
 const userValidation = new UserValidation();
 
 router.post('/contact', userValidation.contactRequest, userCtrl.contact);
+router.post('/download-invoice/:invoiceId', userCtrl.generate);
 
 export default router;
