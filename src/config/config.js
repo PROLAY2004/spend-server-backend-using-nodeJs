@@ -15,6 +15,7 @@ const configuration = {
   REFRESH_EXPIRE: process.env.REFRESH_EXPIRE,
   CLIENT_ID: process.env.CLIENT_ID,
   CLIENT_SECRET: process.env.CLIENT_SECRET,
+  INVOICE_SECRET: process.env.INVOICE_SECRET,
 
   CORS: {
     origin: [process.env.FRONTEND_URL],

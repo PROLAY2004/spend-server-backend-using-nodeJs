@@ -32,7 +32,7 @@ export default class TokenValidation {
 
       next();
     } catch (err) {
-      if (err.message == 'jwt expired') {
+      if (err.message === 'jwt expired' || err.message === 'jwt malformed') {
         res.status(401);
       }
 
@@ -68,7 +68,7 @@ export default class TokenValidation {
 
         next();
     } catch (err) {
-      if (err.message == 'jwt expired') {
+      if (err.message == 'jwt expired' || err.message === 'jwt malformed') {
         res.status(401);
       }
 

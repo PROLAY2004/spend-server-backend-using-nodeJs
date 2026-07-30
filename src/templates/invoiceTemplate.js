@@ -68,7 +68,7 @@ const invoiceTemplate = ({ invoiceDetails, userData, records }) => {
                     <section class="invoice-details">
                         <div class="biller-info">
                             <h3>BILL TO:</h3>
-                            <p class="client-name">${invoiceDetails.payerName}</p>
+                            <p class="client-name">${invoiceDetails.payerName.toUpperCase()}</p>
                             <p>+91 ${invoiceDetails.payerMobile}</p>
                         </div>
 

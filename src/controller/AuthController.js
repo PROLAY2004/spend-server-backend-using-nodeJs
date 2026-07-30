@@ -3,9 +3,10 @@ import axios from 'axios';
 import otp from '../models/otpModel.js';
 import user from '../models/userModel.js';
 import otpGenerator from '../utils/genOtp.js';
-import genAuthToken from '../utils/tokenGenerator.js';
+import TokenGenerator from '../utils/TokenGenerator.js';
 import oauth2Client from '../utils/googleClient.js';
 
+const genToken = new TokenGenerator();
 export default class AuthController {
   sendOtp = async (req, res, next) => {
     try {
@@ -67,7 +68,7 @@ export default class AuthController {
         }
       );
 
-      const tokens = await genAuthToken(userInfo._id);
+      const tokens = await genToken.genAuthToken(userInfo._id);
 
       res.status(200).json({
         message: 'User Login Successful.',
@@ -115,7 +116,7 @@ export default class AuthController {
         }
       );
 
-      const tokens = await genAuthToken(userInfo._id);
+      const tokens = await genToken.genAuthToken(userInfo._id);
 
       res.status(200).json({
         message: 'Google Login Successful.',
@@ -133,7 +134,7 @@ export default class AuthController {
   refresh = async (req, res, next) => {
     try {
       const userInfo = req.user;
-      const tokens = await genAuthToken(userInfo._id, 'refresh');
+      const tokens = await genToken.genAuthToken(userInfo._id, 'refresh');
 
       res.status(200).json({
         message: 'Refresh Token Successfully Generated.',

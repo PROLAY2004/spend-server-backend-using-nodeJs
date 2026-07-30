@@ -3,6 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 import invoice from '../models/invoiceModel.js';
 import payer from '../models/payerModel.js';
 import record from '../models/recordsModel.js';
+import TokenGenerator from '../utils/TokenGenerator.js';
+
+const genToken = new TokenGenerator();
 
 export default class InvoiceController {
   generate = async (req, res, next) => {
@@ -53,7 +56,7 @@ export default class InvoiceController {
         });
       }
 
-      await invoice.create({
+      const invoiceData = await invoice.create({
         userId,
         payerId,
         invoiceName: `Invoice-${uuidv4()}`,
@@ -66,6 +69,9 @@ export default class InvoiceController {
       return res.status(201).json({
         success: true,
         message: 'Invoice Generated Successfully',
+        data: {
+          invoiceId: invoiceData._id,
+        },
       });
     } catch (err) {
       next(err);
@@ -285,6 +291,60 @@ export default class InvoiceController {
       });
     } catch (err) {
       next(err);
+    }
+  };
+
+  share = async (req, res, next) => {
+    try {
+      const invoiceId = req.params.invoiceId;
+
+      if (!invoiceId) {
+        res.status(400);
+        throw new Error('Invoice ID is required');
+      }
+
+      const token = await genToken.genInvoiceToken(invoiceId);
+
+      res.status(200).json({
+        message: 'Sharing Link Generated. Redirecting... ',
+        success: true,
+        data: {
+          token,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+
+  updateInvoiceStatuses = async (req, res, next) => {
+    try {
+      const { invoiceId, updates } = req.body;
+
+      if (!invoiceId || !Array.isArray(updates) || updates.length === 0) {
+        res.status(400);
+        throw new Error('Invoice ID and an array of updates are required.');
+      }
+
+      const bulkOps = updates.map((update) => ({
+        updateOne: {
+          filter: { _id: update.recordId, isDeleted: false },
+          update: {
+            $set: {
+              status: update.status.toLowerCase(),
+            },
+          },
+        },
+      }));
+
+      await record.bulkWrite(bulkOps);
+
+      res.status(200).json({
+        success: true,
+        message: 'Statuses updated successfully',
+      });
+    } catch (error) {
+      next(error);
     }
   };
 }
