@@ -347,4 +347,44 @@ export default class InvoiceController {
       next(error);
     }
   };
+
+  deleteInvoice = async (req, res, next) => {
+    try {
+      const invoiceId = req.body.invoiceId;
+
+      if (!invoiceId) {
+        res.status(400);
+        throw new Error('Invoice ID is required');
+      }
+
+      const updatedInvoice = await invoice.findOneAndUpdate(
+        {
+          _id: invoiceId,
+          userId: req.user._id,
+          isDeleted: false,
+        },
+        {
+          $set: {
+            isDeleted: true,
+          },
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      if (!updatedInvoice) {
+        res.status(404);
+        throw new Error('Invoice Not Found');
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Invoice Deleted Successfully',
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
 }

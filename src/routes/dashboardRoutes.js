@@ -35,5 +35,6 @@ router.post('/fetch-invoice', invoice.getData);
 router.post('/view-invoice', invoice.viewInvoice);
 router.get('/share-invoice/:invoiceId', invoice.share)
 router.put('/invoice', invoice.updateInvoiceStatuses);
+router.delete('/invoice', invoice.deleteInvoice);
 
 export default router;
