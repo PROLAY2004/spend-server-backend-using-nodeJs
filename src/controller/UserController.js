@@ -164,14 +164,14 @@ export default class UserController {
         invoiceDetails.status = actualInvoiceStatus;
       }
 
-      const totalAmount = records.reduce(
+      const totalAmount = totalRecords.reduce(
         (sum, item) => sum + (item.spendAmount || 0),
         0
       );
 
-      const dueAmount = records.reduce(
+      const dueAmount = totalRecords.reduce(
         (sum, item) =>
-          item.status !== 'Paid' ? sum + (item.dueAmount || 0) : sum,
+          item.status !== 'paid' ? sum + (item.dueAmount || 0) : sum,
         0
       );
 
