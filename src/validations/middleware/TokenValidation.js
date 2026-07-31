@@ -1,5 +1,6 @@
 import configuration from '../../config/config.js';
 import user from '../../models/userModel.js';
+import invoice from '../../models/invoiceModel.js';
 import verifyToken from '../../utils/tokenVerifier.js';
 
 export default class TokenValidation {
@@ -27,7 +28,6 @@ export default class TokenValidation {
         throw new Error('User Blocked. Logging Out!');
       }
 
-
       req.user = appUser;
 
       next();
@@ -44,8 +44,6 @@ export default class TokenValidation {
     try {
       const decoded = verifyToken(req, res, configuration.REFRESH_SECRET);
       const appUser = await user.findOne({ _id: decoded.userId });
-      const expiryTime = new Date(appUser?.validTill);
-      const now = new Date();
 
       if (!appUser) {
         res.status(401);
@@ -64,11 +62,39 @@ export default class TokenValidation {
         throw new Error('User Blocked. Logging Out!');
       }
 
-        req.user = appUser;
+      req.user = appUser;
 
-        next();
+      next();
     } catch (err) {
       if (err.message == 'jwt expired' || err.message === 'jwt malformed') {
+        res.status(401);
+      }
+
+      next(err);
+    }
+  };
+
+  invoiceTokenValidator = async (req, res, next) => {
+    try {
+      const decoded = verifyToken(req, res, configuration.INVOICE_SECRET);
+      const invoiceData = await invoice.findOne({ _id: decoded.invoiceId });
+
+      if (!invoiceData) {
+        res.status(401);
+        throw new Error('Invoice does not exists');
+      }
+
+      if (invoiceData.isDeleted) {
+        res.status(401);
+
+        throw new Error('Invoice was Deleted');
+      }
+
+      req.invoice = invoiceData;
+
+      next();
+    } catch (err) {
+      if (err.message === 'jwt malformed') {
         res.status(401);
       }
 

@@ -104,11 +104,12 @@ const invoiceTemplate = ({ invoiceDetails, userData, records }) => {
                                 <td colspan="3">PAYMENT STATUS</td>
                                 <td colspan="2"
                                     class="center-align ${
-                                    invoiceDetails.status === 'paid'
+                                      invoiceDetails.status.toUpperCase ===
+                                      'PAID'
                                         ? 'pe-40'
                                         : invoiceDetails.status === 'non-paid'
-                                        ? 'pe-25'
-                                        : ''
+                                          ? 'pe-25'
+                                          : ''
                                     }">
                                     ${invoiceDetails.status.toUpperCase()}
                                 </td>

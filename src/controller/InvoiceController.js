@@ -262,12 +262,13 @@ export default class InvoiceController {
       }
 
       // 2. Calculate pagination on the recordData array
-      const totalRecords = invoiceDetails.recordData.length;
-      const totalPages = Math.ceil(totalRecords / limit) || 1;
+      const totalRecords = await record.find({
+        _id: { $in: invoiceDetails.recordData },
+        isDeleted: false,
+      });
+      const totalPages = Math.ceil(totalRecords.length / limit) || 1;
       const skip = (page - 1) * limit;
-
-      // 3. Slice the array to get only the IDs for the current page
-      const paginatedIds = invoiceDetails.recordData.slice(skip, skip + limit);
+      const paginatedIds = totalRecords.slice(skip, skip + limit);
 
       // 4. Fetch only the records for those sliced IDs
       const records = await record
