@@ -4,7 +4,6 @@ import PayerController from '../controller/PayerController.js';
 import RecordsController from '../controller/RecordsController.js';
 import DashboardController from '../controller/DashboardController.js';
 import InvoiceController from '../controller/InvoiceController.js';
-import LedgerController from '../controller/LedgerController.js';
 import FormValidation from '../validations/middleware/FormValidation.js';
 
 const router = express.Router();
@@ -12,8 +11,8 @@ const payer = new PayerController();
 const validation = new FormValidation();
 const record = new RecordsController();
 const dashboard = new DashboardController();
-const invoice = new InvoiceController();3
-const ledger = new LedgerController();
+const invoice = new InvoiceController();
+3;
 
 router.post('/overview', dashboard.getDashboardOverview);
 router.get('/export', dashboard.exportDashboardExcel);
@@ -23,8 +22,7 @@ router.put('/payer/:payerId', validation.addPayerRequest, payer.editPayer);
 router.delete('/payer/:payerId', payer.deletePayer);
 router.post('/fetch-payers', payer.fetchPayer);
 
-router.post('/fetch-ledger/', ledger.fetchLedger);
-
+router.post('/fetch-ledger/', record.fetchLedger);
 router.post('/records', validation.addLedgerRequest, record.addLedger);
 router.put('/records/:recId', validation.addLedgerRequest, record.editLedger);
 router.delete('/records', record.deleteLedger);

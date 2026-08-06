@@ -97,6 +97,17 @@ export default class PayerController {
         throw new Error('Payer Id is Required');
       }
 
+      const existingRecord = await record.findOne({
+        payerId: String(payerId), // Cast to string to match your recordSchema
+        userId: String(req.user._id),
+        isDeleted: false, // Only check active records
+      });
+
+      if (existingRecord) {
+        res.status(400); // 400 Bad Request (or 409 Conflict)
+        throw new Error('Cannot delete payer with existing ledger records.');
+      }
+
       const updatedPayer = await payer.findOneAndUpdate(
         {
           _id: payerId,

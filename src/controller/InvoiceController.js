@@ -33,27 +33,22 @@ export default class InvoiceController {
       ]);
 
       if (records.length !== recordIds.length) {
-        return res.status(400).json({
-          success: false,
-          message:
-            'One or more selected records are invalid or have been deleted.',
-        });
+        res.status(400);
+        throw new Error(
+          'One or more selected records are invalid or have been deleted.'
+        );
       }
 
       if (!payerDetails) {
-        return res.status(404).json({
-          success: false,
-          message: 'Invalid Payer ID',
-        });
+        res.status(404);
+        throw new Error('Payer does not exist or has been deleted.');
       }
 
       const statuses = new Set(records.map((record) => record.status));
 
       if (statuses.size > 1) {
-        return res.status(400).json({
-          success: false,
-          message: 'Please select records with the same payment status.',
-        });
+        res.status(400);
+        throw new Error('Please select records with the same payment status.');
       }
 
       const invoiceData = await invoice.create({
@@ -66,7 +61,7 @@ export default class InvoiceController {
         recordData: recordIds,
       });
 
-      return res.status(201).json({
+      res.status(201).json({
         success: true,
         message: 'Invoice Generated Successfully',
         data: {
