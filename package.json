@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "server.js",
+  "main": "src/server.js",
   "scripts": {
     "dev": "nodemon --inspect src/server.js",
     "format": "npx prettier --write .",
