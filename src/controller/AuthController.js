@@ -11,7 +11,7 @@ export default class AuthController {
   sendOtp = async (req, res, next) => {
     try {
       const email = req.query.email.toLowerCase();
-      const isUser = await user.findOne({email});
+      const isUser = await user.findOne({ email });
 
       console.log(isUser);
 
@@ -117,6 +117,16 @@ export default class AuthController {
           new: true,
         }
       );
+
+      if (userInfo && userInfo.isBlocked) {
+        res.status(400);
+        throw new Error('User Blocked By Admin.');
+      }
+
+      if (userInfo && userInfo.isDeleted) {
+        res.status(404);
+        throw new Error("Can't Login, Deletation Request Recived.");
+      }
 
       const tokens = await genToken.genAuthToken(userInfo._id);
 

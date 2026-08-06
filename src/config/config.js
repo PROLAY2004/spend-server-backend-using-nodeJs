@@ -18,10 +18,8 @@ const configuration = {
   INVOICE_SECRET: process.env.INVOICE_SECRET,
 
   CORS: {
-    credentials: true,
     origin: [process.env.FRONTEND_URL],
     methods: ['POST', 'GET', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
   },
 };
 
