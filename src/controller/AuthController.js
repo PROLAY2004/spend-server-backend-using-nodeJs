@@ -13,13 +13,15 @@ export default class AuthController {
       const email = req.query.email.toLowerCase();
       const isUser = await user.findOne({email});
 
-      if(isUser.isBlocked){
-        res.status(400)
+      console.log(isUser);
+
+      if (isUser && isUser.isBlocked) {
+        res.status(400);
         throw new Error('User Blocked By Admin.');
       }
 
-      if(isUser.isDeleted){
-        res.status(404)
+      if (isUser && isUser.isDeleted) {
+        res.status(404);
         throw new Error("Can't Login, Deletation Request Recived.");
       }
 
